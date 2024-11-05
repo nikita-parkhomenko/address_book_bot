@@ -10,7 +10,7 @@ Address Book Bot is a command-line-based contact management system that allows u
 - **Error Handling**: Provides clear feedback for incorrect input with custom error handling.
 - **User-Friendly Commands**: Simple, intuitive commands for quick access to all functionalities.
 
-## Installation
+## How to install
 
 1. **Clone the repository**:
 
