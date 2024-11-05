@@ -33,15 +33,21 @@ class Birthday(Field):
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY instead")
 
-class Email(Field): # add class for email
+
+class Email(Field):  # add class for email
     def __init__(self, value):
         if not Email.validate(value):  # call the static validate method
             raise ValueError("Invalid email format.")
         super().__init__(value)
 
     @staticmethod
-    def validate(value): # add static method for validation
-        return bool(re.fullmatch(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",value))
+    def validate(value):  # add static method for validation
+        return bool(
+            re.fullmatch(
+                r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",
+                value,
+            )
+        )
 
 
 class Record:
@@ -116,6 +122,23 @@ class AddressBook(UserDict):
             del self.data[name]
         else:
             return "Contact not found."
+
+
+class Note:
+    def __init__(self, title, text):
+        self.title = title
+        self.text = text
+
+    def __str__(self):
+        return f"Title: {self.title}, Text: {self.text}"
+
+
+class NoteBook(UserDict):
+    def add_note(self, title, text):
+        if title in self.data:
+            return f"Note with the title '{title}' already exists."
+        self.data[title] = Note(title, text)
+        return "Note was added!"
 
 
 # Decorator to handle errors
@@ -202,7 +225,7 @@ def show_birthday(args, book):
 
 @input_error
 def upcoming_birthdays(args, book: AddressBook):
-    days = int(args[0]) if args and args[0].isdigit() else 7 # Use 7 days by default
+    days = int(args[0]) if args and args[0].isdigit() else 7  # Use 7 days by default
     upcoming = book.get_upcoming_birthdays(days)
     if upcoming:
         print(f"Contacts with birthdays in {days} days: " + ", ".join(upcoming))
