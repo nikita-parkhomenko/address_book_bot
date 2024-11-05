@@ -91,9 +91,9 @@ class AddressBook(UserDict):
     def find(self, name):
         return self.data.get(name, None)
 
-    def get_upcoming_birthdays(self):
+    def get_upcoming_birthdays(self, days=7):
         today = datetime.today()
-        next_week = today + timedelta(days=7)
+        target_date = today + timedelta(days=days)
         upcoming_birthdays = []
 
         for record in self.data.values():
@@ -105,8 +105,8 @@ class AddressBook(UserDict):
                 if birthday_this_year < today:
                     birthday_this_year = birthday_this_year.replace(year=today.year + 1)
 
-                # Check if the birthday is within the next week
-                if today <= birthday_this_year <= next_week:
+                # Check if the birthday is in the specified range
+                if today <= birthday_this_year <= target_date:
                     upcoming_birthdays.append(record.name.value)
 
         return upcoming_birthdays
@@ -201,11 +201,13 @@ def show_birthday(args, book):
 
 
 @input_error
-def upcoming_birthdays(book):
-    upcoming = book.get_upcoming_birthdays()
+def upcoming_birthdays(args, book: AddressBook):
+    days = int(args[0]) if args and args[0].isdigit() else 7 # Use 7 days by default
+    upcoming = book.get_upcoming_birthdays(days)
     if upcoming:
-        print("Upcoming birthdays in the next week: " + ", ".join(upcoming))
-    print("No upcoming birthdays in the next week.")
+        print(f"Contacts with birthdays in {days} days: " + ", ".join(upcoming))
+    else:
+        print(f"No contacts with birthdays in {days} days.")
 
 
 def main():
