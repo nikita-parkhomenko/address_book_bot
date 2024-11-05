@@ -35,7 +35,13 @@ class Birthday(Field):
 
 class Email(Field): # add class for email
     def __init__(self, value):
+        if not Email.validate(value):  # call the static validate method
+            raise ValueError("Invalid email format.")
         super().__init__(value)
+
+    @staticmethod
+    def validate(value): # add static method for validation
+        return bool(re.fullmatch(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",value))
 
 
 class Record:
