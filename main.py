@@ -39,6 +39,7 @@ class Record:
         self.name = Name(name)
         self.birthday = None
         self.phones = []
+        self.notes = []
 
     def add_phone(self, phone):
         phone_obj = Phone(phone)
@@ -102,6 +103,23 @@ class AddressBook(UserDict):
             del self.data[name]
         else:
             return "Contact not found."
+
+
+class Note:
+    def __init__(self, title, text):
+        self.title = title
+        self.text = text
+
+    def __str__(self):
+        return f"Title: {self.title}, Text: {self.text}"
+
+
+class NoteBook(UserDict):
+    def add_note(self, title, text):
+        if title in self.data:
+            return f"Note with the title '{title}' already exists."
+        self.data[title] = Note(title, text)
+        return "Note was added!"
 
 
 # Decorator to handle errors
@@ -194,8 +212,22 @@ def upcoming_birthdays(book):
     print("No upcoming birthdays in the next week.")
 
 
+@input_error
+def add_note(args, note_book: NoteBook):
+    title, *text_parts = args
+    text = " ".join(text_parts)
+    # print(note_book.add_note(title, text))
+    message = note_book.add_note(title, text)
+
+    if message == "Note was added!":
+        print(f"{message} Title: '{title}', Text: '{text}'")
+    else:
+        print(message)
+
+
 def main():
     book = AddressBook()
+    notes_book = NoteBook()
     print("Welcome to the assistant bot!")
 
     while True:
@@ -230,6 +262,9 @@ def main():
 
         elif command == "birthdays":
             upcoming_birthdays(book)
+
+        elif command == "add-note":
+            add_note(args, notes_book)
 
         else:
             print("Invalid command.")
