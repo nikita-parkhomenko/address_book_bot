@@ -33,15 +33,21 @@ class Birthday(Field):
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY instead")
 
-class Email(Field): # add class for email
+
+class Email(Field):  # add class for email
     def __init__(self, value):
         if not Email.validate(value):  # call the static validate method
             raise ValueError("Invalid email format.")
         super().__init__(value)
 
     @staticmethod
-    def validate(value): # add static method for validation
-        return bool(re.fullmatch(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",value))
+    def validate(value):  # add static method for validation
+        return bool(
+            re.fullmatch(
+                r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",
+                value,
+            )
+        )
 
 
 class Record:
@@ -202,7 +208,7 @@ def show_birthday(args, book):
 
 @input_error
 def upcoming_birthdays(args, book: AddressBook):
-    days = int(args[0]) if args and args[0].isdigit() else 7 # Use 7 days by default
+    days = int(args[0]) if args and args[0].isdigit() else 7  # Use 7 days by default
     upcoming = book.get_upcoming_birthdays(days)
     if upcoming:
         print(f"Contacts with birthdays in {days} days: " + ", ".join(upcoming))
@@ -210,8 +216,21 @@ def upcoming_birthdays(args, book: AddressBook):
         print(f"No contacts with birthdays in {days} days.")
 
 
+@input_error
+def add_note(args, note_book: NoteBook):
+    title, *text_parts = args
+    text = " ".join(text_parts)
+    message = note_book.add_note(title, text)
+
+    if message == "Note was added!":
+        print(f"{message} Title: '{title}', Text: '{text}'")
+    else:
+        print(message)
+
+
 def main():
     book = AddressBook()
+    notes_book = NoteBook()
     print("Welcome to the assistant bot!")
 
     while True:
@@ -246,6 +265,9 @@ def main():
 
         elif command == "birthdays":
             upcoming_birthdays(book)
+
+        elif command == "add-note":
+            add_note(args, notes_book)
 
         else:
             print("Invalid command.")
