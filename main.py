@@ -33,12 +33,26 @@ class Birthday(Field):
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY instead")
 
+class Email(Field): # add class for email
+    def __init__(self, value):
+        if not Email.validate(value):  # call the static validate method
+            raise ValueError("Invalid email format.")
+        super().__init__(value)
+
+    @staticmethod
+    def validate(value): # add static method for validation
+        return bool(re.fullmatch(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",value))
+
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.birthday = None
         self.phones = []
+        self.email = None  # add field for email
+
+    def add_email(self, email):
+        self.email = Email(email)  # add email to the record
 
     def add_phone(self, phone):
         phone_obj = Phone(phone)
