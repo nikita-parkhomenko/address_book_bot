@@ -33,12 +33,20 @@ class Birthday(Field):
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY instead")
 
+class Email(Field): # add class for email
+    def __init__(self, value):
+        super().__init__(value)
+
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.birthday = None
         self.phones = []
+        self.email = None  # add field for email
+
+    def add_email(self, email):
+        self.email = Email(email)  # add email to the record
 
     def add_phone(self, phone):
         phone_obj = Phone(phone)
