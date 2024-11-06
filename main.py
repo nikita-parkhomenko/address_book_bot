@@ -157,6 +157,7 @@ class NoteBook(UserDict):
         self.data[title] = Note(title, text)
         return "Note was added!"
 
+<<<<<<< HEAD
     def delete_note(self, title):
         if title in self.data:
             del self.data[title]
@@ -177,6 +178,13 @@ class NoteBook(UserDict):
         """Edit the content of an existing note."""
         if title in self.data:
             self.data[title].text = new_content
+=======
+    def edit_note(self, title, new_text):
+        if title in self.data:
+            self.data[title].text = new_text
+            return f"Note '{title}' was updated."
+        return f"Ooops! Note '{title}' was not found. Please try again."
+>>>>>>> 8840403 (Edit note feature added)
 
 
 # Decorator to handle errors
@@ -383,6 +391,15 @@ def edit_note(note_book: NoteBook):
 >>>>>>> bc85b80 (feature/Edit-note)
 
 
+@input_error
+def edit_note(args, note_book: NoteBook):
+    title, *new_text_parts = args
+    new_text = " ".join(new_text_parts)
+    message = note_book.edit_note(title, new_text)
+    print(f"{message} Title: '{title}', Text: '{new_text}'")
+    print(message)
+
+
 def main():
     book = AddressBook()
     note_book = NoteBook()
@@ -425,6 +442,7 @@ def main():
             upcoming_birthdays(book)
 
         elif command == "add-note":
+<<<<<<< HEAD
             add_note(note_book)
 
         elif command == "delete-note":
@@ -437,6 +455,12 @@ def main():
         elif command == "edit-note":
             edit_note(note_book)
 >>>>>>> bc85b80 (feature/Edit-note)
+=======
+            add_note(args, note_book)
+
+        elif command == "edit-note":
+            edit_note(args, note_book)
+>>>>>>> 8840403 (Edit note feature added)
 
         else:
             print("Invalid command.")
