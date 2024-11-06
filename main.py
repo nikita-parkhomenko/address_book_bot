@@ -233,8 +233,21 @@ def upcoming_birthdays(args, book: AddressBook):
         print(f"No contacts with birthdays in {days} days.")
 
 
+@input_error
+def add_note(args, note_book: NoteBook):
+    title, *text_parts = args
+    text = " ".join(text_parts)
+    message = note_book.add_note(title, text)
+
+    if message == "Note was added!":
+        print(f"{message} Title: '{title}', Text: '{text}'")
+    else:
+        print(message)
+
+
 def main():
     book = AddressBook()
+    notes_book = NoteBook()
     print("Welcome to the assistant bot!")
 
     while True:
@@ -269,6 +282,9 @@ def main():
 
         elif command == "birthdays":
             upcoming_birthdays(book)
+
+        elif command == "add-note":
+            add_note(args, notes_book)
 
         else:
             print("Invalid command.")
