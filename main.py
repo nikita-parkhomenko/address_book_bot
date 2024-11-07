@@ -140,6 +140,12 @@ class NoteBook(UserDict):
         self.data[title] = Note(title, text)
         return "Note was added!"
 
+    def delete_note(self, title):
+        if title in self.data:
+            del self.data[title]
+            return f"Note '{title}' has been deleted.'"
+        return f"Note '{title} was not found.'"
+
 
 # Decorator to handle errors
 def input_error(func):
@@ -245,9 +251,16 @@ def add_note(args, note_book: NoteBook):
         print(message)
 
 
+@input_error
+def delete_note(args, note_book: NoteBook):
+    title = args[0]
+    message = note_book.delete_note(title)
+    print(message)
+
+
 def main():
     book = AddressBook()
-    notes_book = NoteBook()
+    note_book = NoteBook()
     print("Welcome to the assistant bot!")
 
     while True:
@@ -284,7 +297,10 @@ def main():
             upcoming_birthdays(book)
 
         elif command == "add-note":
-            add_note(args, notes_book)
+            add_note(args, note_book)
+
+        elif command == "delete-note":
+            delete_note(args, note_book)
 
         else:
             print("Invalid command.")
