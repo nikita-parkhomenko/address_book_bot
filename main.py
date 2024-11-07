@@ -240,15 +240,23 @@ def upcoming_birthdays(args, book: AddressBook):
 
 
 @input_error
-def add_note(args, note_book: NoteBook):
-    title, *text_parts = args
-    text = " ".join(text_parts)
-    message = note_book.add_note(title, text)
+def add_note(note_book: NoteBook):
+    while True:
+        title = input("Please enter note title: ").strip()
+        if not title:
+            print("Note title cannot be empty.")
+        elif title in note_book.data:
+            print(f"Note with the title '{title}' already exists.")
+        else:
+            break
 
-    if message == "Note was added!":
-        print(f"{message} Title: '{title}', Text: '{text}'")
-    else:
-        print(message)
+    text = input("Please enter note content: ").strip()
+    if not text:
+        print(f"Your note '{title}' has not content.")
+
+    note_book.add_note(title, text)
+
+    print(f"Note successfully created! Title: '{title}', Text: '{text}'")
 
 
 @input_error
@@ -297,7 +305,7 @@ def main():
             upcoming_birthdays(book)
 
         elif command == "add-note":
-            add_note(args, note_book)
+            add_note(note_book)
 
         elif command == "delete-note":
             delete_note(args, note_book)
