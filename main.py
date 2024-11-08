@@ -1,7 +1,13 @@
 import re
 from collections import UserDict
 from datetime import datetime, timedelta
+from rich.console import Console
+from rich.table import Table
+from rich import print
+from rich.panel import Panel
 
+
+console = Console()
 
 class Field:
     def __init__(self, value):
@@ -154,7 +160,7 @@ def input_error(func):
         try:
             func(*args, **kwargs)
         except (KeyError, ValueError, IndexError) as er:
-            return f"Error: {er}"
+            console.print(f":x: [red bold]Error:[/red bold] {er}")
 
     return wrapper
 
@@ -166,11 +172,13 @@ def add_contact(args, book: AddressBook):
     record = book.find(name)
     if record is None:
         record = Record(name)
-        print(f"new record created: {record}")
+        console.print(
+            f":bust_in_silhouette: [green]New contact created[/green]: {record}"
+        )
         book.add_record(record)
-        message = "Contact added."
+        message = ":white_check_mark: [green]Contact added.[/green]"
     else:
-        message = "Contact updated."
+        message = ":thumbs_up: [yellow]Contact updated.[/yellow]"
 
     record.add_phone(phone)
     if email:
@@ -184,9 +192,9 @@ def change_phone(args, book: AddressBook):
     record: Record = book.find(name)
     if record:
         record.edit_phone(old_phone, new_phone)
-        print("Phone has been changed.")
+        console.print(":phone: [green]Phone has been changed.[/green]")
     else:
-        print("Contact not found.")
+        console.print(":x: [red]Contact not found.[/red]")
 
 
 @input_error
@@ -201,11 +209,29 @@ def show_phone_numbers(args, book: AddressBook):
 
 @input_error
 def show_all_contacts(book: AddressBook):
-    is_empty = len(book.data) < 1
-    if is_empty:
-        print("Address book is empty.")
-    else:
-        print("\n".join(str(record) for record in book.data.values()))
+    if len(book.data) < 1:
+        console.print(":open_book: [yellow]Address book is empty.[/yellow]")
+        return
+
+    table = Table(title="Address book")
+    table.add_column("Name", style="cyan", justify="center")
+    table.add_column("Birthday", style="magenta", justify="center")
+    table.add_column("Phones", style="green", justify="center")
+    table.add_column("Email", style="blue", justify="center")
+
+    for record in book.data.values():
+        name = record.name.value
+        birthday = (
+            datetime.strftime(record.birthday.value, "%d.%m.%Y")
+            if record.birthday
+            else "no birthday"
+        )
+        phones = "; ".join(p.value for p in record.phones)
+        email = record.email.value if record.email else "no email"
+
+        table.add_row(name, birthday, phones, email)
+
+    console.print(table)
 
 
 @input_error
@@ -214,9 +240,9 @@ def add_birthday(args, book: AddressBook):
     record: Record = book.find(name)
     if record:
         record.add_birthday(birthday)
-        print(f"Birthday for {name} added")
+        console.print(f":birthday: [green]Birthday for {name} added[/green]")
     else:
-        print("Contact not found.")
+        console.print(":x: [red]Contact not found.[/red]")
 
 
 @input_error
@@ -224,13 +250,13 @@ def show_birthday(args, book):
     name = args[0]
     record = book.find(name)
     if record and record.birthday:
-        print(
-            f"{name}'s birthday: {datetime.strftime(record.birthday.value, '%d.%m.%Y')}"
+        console.print(
+            f"{name}'s :birthday: [cyan]birthday[/cyan]: {datetime.strftime(record.birthday.value, '%d.%m.%Y')}"
         )
     elif record:
-        print(f"{name} does not have a birthday set.")
+        console.print(f"[yellow]{name} does not have a birthday set.[/yellow]")
     else:
-        print("Contact not found.")
+        console.print(":x: [red]Contact not found.[/red]")
 
 
 @input_error
@@ -238,9 +264,14 @@ def upcoming_birthdays(args, book: AddressBook):
     days = int(args[0]) if args and args[0].isdigit() else 7  # Use 7 days by default
     upcoming = book.get_upcoming_birthdays(days)
     if upcoming:
-        print(f"Contacts with birthdays in {days} days: " + ", ".join(upcoming))
+        console.print(
+            f":calendar: [blue]Contacts with birthdays in {days} days:[/blue] "
+            + ", ".join(upcoming)
+        )
     else:
-        print(f"No contacts with birthdays in {days} days.")
+        console.print(
+            f":hourglass: [yellow]No contacts with birthdays in {days} days.[/yellow]"
+        )
 
 
 @input_error
@@ -248,19 +279,23 @@ def add_note(note_book: NoteBook):
     while True:
         title = input("Please enter note title: ").strip()
         if not title:
-            print("Note title cannot be empty.")
+            console.print(f":warning: [red]Note title cannot be empty.[/red]")
         elif title in note_book.data:
-            print(f"Note with the title '{title}' already exists.")
+            print(
+                f":pushpin: [yellow]Note with the title '{title}' already exists.[/yellow]"
+            )
         else:
             break
 
     text = input("Please enter note content: ").strip()
     if not text:
-        print(f"Your note '{title}' has not content.")
+        console.print(f":x: [yellow]Your note '{title}' has not content.[/yellow]")
 
     note_book.add_note(title, text)
 
-    print(f"Note successfully created! Title: '{title}', Text: '{text}'")
+    console.print(
+        f":memo: [green]Note successfully created! Title: '{title}', Text: '{text}'[/green]"
+    )
 
 
 @input_error
@@ -277,15 +312,15 @@ def add_email(args, book: AddressBook): # Додаємо поле email
 
     if record:
         record.add_email(email)
-        print(f"Email for {name} added.")
+        console.print(f":envelope: [green]Email for {name} added.[/green]")
     else:
-        print("Contact not found.")
+        console.print(":x: [red]Contact not found.[/red]")
 
 
 def main():
     book = AddressBook()
     note_book = NoteBook()
-    print("Welcome to the assistant bot!")
+    console.print(":robot: [bold blue]Welcome to the assistant bot![/bold blue] :wave:")
 
     while True:
         user_input = input("Enter a command: ")
@@ -293,11 +328,11 @@ def main():
         args = args[0].split() if args else []
 
         if command in ["close", "exit"]:
-            print("Good bye!")
+            console.print(":wave: [green]Good bye![/green]")
             break
 
         elif command == "hello":
-            print("How can I help you?")
+            console.print(":smiley: [yellow]How can I help you?[/yellow]")
 
         elif command == "add":
             add_contact(args, book)
@@ -330,7 +365,7 @@ def main():
             add_email(args, book)
 
         else:
-            print("Invalid command.")
+            console.print(":x: [red]Invalid command.[/red]")
 
 
 if __name__ == "__main__":
