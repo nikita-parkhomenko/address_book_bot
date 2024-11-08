@@ -186,7 +186,7 @@ def add_contact(args, book: AddressBook):
     else:
         message = "Contact updated."
     record.add_phone(phone)
-    
+
     print(message)
 
 
@@ -295,7 +295,7 @@ def delete_note(args, note_book: NoteBook):
 
 
 @input_error
-def add_email(args, book: AddressBook):  # Додаємо поле email
+def add_email(args, book: AddressBook):
     name, email = args
     record = book.find(name)
 
@@ -329,7 +329,7 @@ def main():
         elif command == "change":
             change_phone(args, book)
 
-        elif command == "phone":  # може потрібно назвати команду "show-phone"?
+        elif command == "phone":
             show_phone_numbers(args, book)
 
         elif command == "all":
