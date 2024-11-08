@@ -15,36 +15,33 @@ Address Book Bot is a command-line-based contact management system that allows u
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/your-username/address-book-bot.git
+   git clone https://github.com/nikita-parkhomenko/address_book_bot.git
    cd address-book-bot
+   python main.py
    ```
 
-# Adding a new contact with a phone number
+## Commands
 
-> add John 1234567890
-> Contact added.
+### Note Management
 
-# Adding a birthday for a contact
+- **add-note**: Adds a new note by entering a title and content.
+- **edit-note**: Prompts you to edit a note's title or content.
+- **all-notes**: Displays all notes in the notes book.
+- **delete-note <title>**: Deletes a note by its title.
 
-> add-birthday John 01.01.1990
-> Birthday for John added.
+### Contact Management
 
-# Changing a contact's phone number
+- **hello**: Greets the user and provides an introductory message.
+- **add <name> <phone>**: Adds a new contact with the specified name and phone number. If the contact exists, it updates the phone number.
+- **change <name> <old_phone> <new_phone>**: Updates a contact’s phone number.
+- **phone <name>**: Displays all phone numbers associated with the contact.
+- **all**: Shows all contacts in the address book.
+- **add-birthday <name> <birthday>**: Adds or updates the birthday for the specified contact. The birthday format should be `DD.MM.YYYY`.
+- **add-address <name> <address>**: Adds or updates the address for the specified contact.
+- **show-birthday <name>**: Displays the birthday of the specified contact.
+- **birthdays <days>**: Lists contacts with upcoming birthdays within the specified number of days.
+- **add-email <name> <email>**: Adds or updates the email for the specified contact.
 
-> change John 1234567890 0987654321
-> Phone has been changed.
+### Exiting the Bot
 
-# Showing a contact's phone numbers
-
-> phone John
-> 0987654321
-
-# Showing all contacts
-
-> all
-> Contact name: John, contact birthday: 01.01.1990, phones: 0987654321
-
-# Checking upcoming birthdays within a week
-
-> birthdays
-> Upcoming birthdays in the next week: John
+- **exit** or **close**: Closes the bot and ends the session.
