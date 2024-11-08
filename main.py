@@ -34,6 +34,17 @@ class Birthday(Field):
             raise ValueError("Invalid date format. Use DD.MM.YYYY instead")
 
 
+class Address(Field):
+    def __init__(self, value):
+        if not self.validate(value):
+            raise ValueError("Address must be at least 2 characters long.")
+        super().__init__(value)
+
+    def validate(self, value):
+        # check if the address is at least 2 characters long
+        return len(value) >= 2
+
+
 class Email(Field):  # add class for email
     def __init__(self, value):
         if not Email.validate(value):  # call the static validate method
@@ -55,7 +66,8 @@ class Record:
         self.name = Name(name)
         self.birthday = None
         self.phones = []
-        self.email = None  # add field for email
+        self.email = None
+        self.address = None
 
     def add_email(self, email):
         self.email = Email(email)  # add email to the record
@@ -66,6 +78,9 @@ class Record:
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
+
+    def add_address(self, address):
+        self.address = Address(address)
 
     def remove_phone(self, phone):
         self.phones = [p for p in self.phones if p.value != phone]
@@ -86,8 +101,9 @@ class Record:
             if self.birthday
             else "No birthday"
         )
+        address = self.address.value if self.address else "no address"
         phones_str = "; ".join(p.value for p in self.phones)
-        return f"Contact name: {self.name.value}, contact birthday: {birthday_str}, phones: {phones_str}"
+        return f"Contact name: {self.name.value}, birthday: {birthday_str}, phones: {phones_str}, address: {address}"
 
 
 class AddressBook(UserDict):
@@ -164,9 +180,8 @@ def add_contact(args, book: AddressBook):
     record = book.find(name)
     if record is None:
         record = Record(name)
-        print(f"new record created: {record}")
         book.add_record(record)
-        message = "Contact added."
+        message = "New contact added."
     else:
         message = "Contact updated."
 
@@ -211,6 +226,18 @@ def add_birthday(args, book: AddressBook):
     if record:
         record.add_birthday(birthday)
         print(f"Birthday for {name} added")
+    else:
+        print("Contact not found")
+
+
+@input_error
+def add_address(args, book: AddressBook):
+    name = args[0]
+    address = " ".join(args[1:])
+    record: Record = book.find(name)
+    if record:
+        record.add_address(address)
+        print(f"Address for {name} added")
     else:
         print("Contact not found")
 
@@ -297,6 +324,9 @@ def main():
 
         elif command == "add-birthday":
             add_birthday(args, book)
+
+        elif command == "add-address":
+            add_address(args, book)
 
         elif command == "show-birthday":
             show_birthday(args, book)
