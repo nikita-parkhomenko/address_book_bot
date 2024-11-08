@@ -163,6 +163,21 @@ class NoteBook(UserDict):
             return f"Note '{title}' has been deleted.'"
         return f"Note '{title} was not found.'"
 
+    def edit_note_title(self, old_title, new_title):
+        """Edit the title of a note while keeping its content."""
+        if old_title in self.data:
+            self.data[new_title] = self.data.pop(
+                old_title
+            )  # Rename the note by moving it
+            self.data[new_title].title = (
+                new_title  # Update the title in the Note object
+            )
+
+    def edit_note_content(self, title, new_content):
+        """Edit the content of an existing note."""
+        if title in self.data:
+            self.data[title].text = new_content
+
 
 # Decorator to handle errors
 def input_error(func):
@@ -295,6 +310,7 @@ def delete_note(args, note_book: NoteBook):
 
 
 @input_error
+<<<<<<< HEAD
 def add_email(args, book: AddressBook):
     name, email = args
     record = book.find(name)
@@ -304,6 +320,67 @@ def add_email(args, book: AddressBook):
         print(f"Email for {name} added.")
     else:
         print("Contact not found.")
+=======
+def edit_note(note_book: NoteBook):
+    # Step 1: Prompt for the current note title until a valid title is entered
+    while True:
+        old_title = input("Enter the title of the note you want to edit: ").strip()
+        if old_title in note_book.data:
+            print(f"Note with title '{old_title}' found.")  # Confirm title found
+            break  # Exit the loop if the title is found
+        print(f"Note with title '{old_title}' not found. Please try again.")
+
+    note = note_book.data[old_title]  # Access the note to edit
+    new_title = old_title  # Default to the current title in case it's not changed
+    new_content = note.text  # Default to the current content in case it's not changed
+
+    # Step 2: Choose what to edit
+    while True:
+        choice = (
+            input("Would you like to edit the (T)itle, (C)ontent, (B)oth, or (E)xit? ")
+            .strip()
+            .lower()
+        )
+        if choice in ("t", "c", "b"):
+            break  # Exit the loop if the input is valid
+        elif choice == "e":
+            print("Exiting the edit process.")
+            return  # Exit the function without making changes
+        else:
+            print("Invalid choice. Please enter (T)itle, (C)ontent, (B)oth, or (E)xit.")
+
+    # Edit the title if chosen
+    if choice in ("t", "b"):
+        while True:
+            new_title_input = input("Enter the new title: ").strip()
+            if not new_title_input:
+                print("New title cannot be empty. Please try again.")
+            elif new_title_input in note_book.data and new_title_input != old_title:
+                print(
+                    f"A note with the title '{new_title_input}' already exists. Please try again."
+                )
+            else:
+                new_title = (
+                    new_title_input or old_title
+                )  # Use the new title if provided, otherwise keep the old one
+                if new_title != old_title:
+                    note_book.edit_note_title(old_title, new_title)
+                break
+
+    # Edit the content if chosen
+    if choice in ("c", "b"):
+        new_content_input = input("Enter the new content for the note: ").strip()
+        if not new_content_input:
+            print("Note content is empty.")  # Inform the user but still proceed to save
+        new_content = (
+            new_content_input or ""
+        )  # Update with new content, even if it's empty
+        if new_content != note.text:
+            note_book.edit_note_content(new_title, new_content)
+
+    # Print confirmation message including the updated note's title and content
+    print(f"Note updated successfully!\nTitle: '{new_title}'\nContent: '{new_content}'")
+>>>>>>> bc85b80 (feature/Edit-note)
 
 
 def main():
@@ -353,8 +430,13 @@ def main():
         elif command == "delete-note":
             delete_note(args, note_book)
 
+<<<<<<< HEAD
         elif command == "add-email":
             add_email(args, book)
+=======
+        elif command == "edit-note":
+            edit_note(note_book)
+>>>>>>> bc85b80 (feature/Edit-note)
 
         else:
             print("Invalid command.")
