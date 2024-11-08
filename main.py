@@ -103,7 +103,8 @@ class Record:
         )
         address = self.address.value if self.address else "no address"
         phones_str = "; ".join(p.value for p in self.phones)
-        return f"Contact name: {self.name.value}, birthday: {birthday_str}, phones: {phones_str}, address: {address}"
+        email_str = self.email.value if self.email else "No email"
+        return f"Contact name: {self.name.value}, contact birthday: {birthday_str}, phones: {phones_str}"
 
 
 class AddressBook(UserDict):
@@ -184,8 +185,8 @@ def add_contact(args, book: AddressBook):
         message = "New contact added."
     else:
         message = "Contact updated."
-
     record.add_phone(phone)
+
     print(message)
 
 
@@ -227,7 +228,7 @@ def add_birthday(args, book: AddressBook):
         record.add_birthday(birthday)
         print(f"Birthday for {name} added")
     else:
-        print("Contact not found")
+        print("Contact not found.")
 
 
 @input_error
@@ -293,6 +294,18 @@ def delete_note(args, note_book: NoteBook):
     print(message)
 
 
+@input_error
+def add_email(args, book: AddressBook):
+    name, email = args
+    record = book.find(name)
+
+    if record:
+        record.add_email(email)
+        print(f"Email for {name} added.")
+    else:
+        print("Contact not found.")
+
+
 def main():
     book = AddressBook()
     note_book = NoteBook()
@@ -339,6 +352,9 @@ def main():
 
         elif command == "delete-note":
             delete_note(args, note_book)
+
+        elif command == "add-email":
+            add_email(args, book)
 
         else:
             print("Invalid command.")
