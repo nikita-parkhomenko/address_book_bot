@@ -178,7 +178,6 @@ def input_error(func):
 @input_error
 def add_contact(args, book: AddressBook):
     name, phone = args[0], args[1]
-    email = args[2] if len(args) > 2 else None  # Додаємо email, якщо він вказаний
     record = book.find(name)
     if record is None:
         record = Record(name)
@@ -186,10 +185,8 @@ def add_contact(args, book: AddressBook):
         message = "New contact added."
     else:
         message = "Contact updated."
-
     record.add_phone(phone)
-    if email:
-        record.add_email(email)  # Додаємо email, якщо він є
+    
     print(message)
 
 
