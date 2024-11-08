@@ -142,19 +142,19 @@ class AddressBook(UserDict):
 
 
 class Note:
-    def __init__(self, title, text):
+    def __init__(self, title, content):
         self.title = title
-        self.text = text
+        self.content = content
 
     def __str__(self):
-        return f"Title: {self.title}, Text: {self.text}"
+        return f"Title: {self.title}, Content: {self.content}"
 
 
 class NoteBook(UserDict):
-    def add_note(self, title, text):
+    def add_note(self, title, content):
         if title in self.data:
             return f"Note with the title '{title}' already exists."
-        self.data[title] = Note(title, text)
+        self.data[title] = Note(title, content)
         return "Note was added!"
 
     def delete_note(self, title):
@@ -162,6 +162,21 @@ class NoteBook(UserDict):
             del self.data[title]
             return f"Note '{title}' has been deleted.'"
         return f"Note '{title} was not found.'"
+
+    def edit_note_title(self, current_title, new_title):
+        """Edit the title of a note while keeping its content."""
+        if current_title in self.data:
+            self.data[new_title] = self.data.pop(
+                current_title
+            )  # Rename the note by moving it
+            self.data[new_title].title = (
+                new_title  # Update the title in the Note object
+            )
+
+    def edit_note_content(self, title, new_content):
+        """Edit the content of an existing note."""
+        if title in self.data:
+            self.data[title].content = new_content
 
 
 # Decorator to handle errors
@@ -278,13 +293,69 @@ def add_note(note_book: NoteBook):
         else:
             break
 
-    text = input("Please enter note content: ").strip()
-    if not text:
+    content = input("Please enter note content: ").strip()
+    if not content:
         print(f"Your note '{title}' has not content.")
 
-    note_book.add_note(title, text)
+    note_book.add_note(title, content)
 
-    print(f"Note successfully created! Title: '{title}', Text: '{text}'")
+    print(f"Note successfully created! Title: '{title}', Content: '{content}'")
+
+
+def edit_note(note_book: NoteBook):
+    # Step 1: Prompt for the current note title until a valid title is entered
+    while True:
+        current_title = input("Enter the title of the note you want to edit: ").strip()
+        if current_title in note_book.data:
+            break  # Exit the loop if the title is found
+        print(f"Note with title '{current_title}' not found. Please try again.")
+
+    # Step 2: Choose what to edit
+    while True:
+        choice = (
+            input("Would you like to edit the (T)itle, (C)ontent, (B)oth, or (E)xit? ")
+            .strip()
+            .lower()
+        )
+        if choice in ("t", "c", "b"):
+            break  # Exit the loop if the input is valid
+        elif choice == "e":
+            print("Exiting the edit process.")
+            return  # Exit the function without making changes
+        else:
+            print("Invalid choice. Please enter (T)itle, (C)ontent, (B)oth, or (E)xit.")
+
+    # Edit the title if chosen
+    if choice in ("t", "b"):
+        while True:
+            new_title_input = input("Enter the new title: ").strip()
+            if not new_title_input:
+                print("New title cannot be empty. Please try again.")
+            elif new_title_input in note_book.data and new_title_input != current_title:
+                print(
+                    f"A note with the title '{new_title_input}' already exists. Please try again."
+                )
+            else:
+                note_book.edit_note_title(current_title, new_title_input)
+                break
+
+    # Edit the content if chosen
+    if choice in ("c", "b"):
+        new_content_input = input("Enter the new content for the note: ").strip()
+        if not new_content_input:
+            print("Note content is empty.")  # Inform the user but still proceed to save
+        note_book.edit_note_content(new_title_input, new_content_input)
+
+    print("Note updated successfully!")
+
+
+@input_error
+def show_all_notes(note_book: NoteBook):
+    is_empty = len(note_book.data) < 1
+    if is_empty:
+        print("Notes book is empty.")
+    else:
+        print("\n".join(str(note) for note in note_book.data.values()))
 
 
 @input_error
@@ -349,6 +420,12 @@ def main():
 
         elif command == "add-note":
             add_note(note_book)
+
+        elif command == "edit-note":
+            edit_note(note_book)
+
+        elif command == "all-notes":
+            show_all_notes(note_book)
 
         elif command == "delete-note":
             delete_note(args, note_book)
