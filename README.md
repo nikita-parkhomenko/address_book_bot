@@ -15,7 +15,7 @@ Address Book Bot is a command-line-based contact management system that allows u
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/nikita-parkhomenko/address_book_bot
+   git clone https://github.com/nikita-parkhomenko/address_book_bot.git
    cd address-book-bot
    python main.py
    ```
