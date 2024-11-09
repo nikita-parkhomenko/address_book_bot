@@ -1,6 +1,12 @@
 import re
 from collections import UserDict
 from datetime import datetime, timedelta
+from rich.console import Console
+from rich.table import Table
+from rich import print
+
+
+console = Console()
 
 
 class Field:
@@ -31,13 +37,17 @@ class Birthday(Field):
         try:
             self.value = datetime.strptime(value, "%d.%m.%Y")
         except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY instead")
+            raise ValueError(
+                ":red_circle: [red]Invalid date format. Use DD.MM.YYYY instead.[/red]"
+            )
 
 
 class Address(Field):
     def __init__(self, value):
         if not self.validate(value):
-            raise ValueError("Address must be at least 2 characters long.")
+            raise ValueError(
+                ":red_circle: [red]Address must be at least 2 characters long.[/red]"
+            )
         super().__init__(value)
 
     def validate(self, value):
@@ -48,7 +58,7 @@ class Address(Field):
 class Email(Field):  # add class for email
     def __init__(self, value):
         if not Email.validate(value):  # call the static validate method
-            raise ValueError("Invalid email format.")
+            raise ValueError(":red_circle: [red]Invalid email format.[/red]")
         super().__init__(value)
 
     @staticmethod
@@ -93,7 +103,7 @@ class Record:
         for p in self.phones:
             if p.value == phone:
                 return p.value
-        return "Phone not found."
+        return ":telephone_receiver: [red]Phone not found.[/red]"
 
     def __str__(self):
         birthday_str = (
@@ -101,7 +111,7 @@ class Record:
             if self.birthday
             else "No birthday"
         )
-        address = self.address.value if self.address else "no address"
+        address = self.address.value if self.address else "No address"
         phones_str = "; ".join(p.value for p in self.phones)
         email_str = self.email.value if self.email else "No email"
         return f"Contact name: {self.name.value}, contact birthday: {birthday_str}, phones: {phones_str}"
@@ -138,7 +148,7 @@ class AddressBook(UserDict):
         if name in self.data:
             del self.data[name]
         else:
-            return "Contact not found."
+            return "[indian_red]Contact not found.[/indian_red]"
 
 
 class Note:
@@ -147,21 +157,21 @@ class Note:
         self.content = content
 
     def __str__(self):
-        return f"Title: {self.title}, Content: {self.content}"
+        return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}"
 
 
 class NoteBook(UserDict):
     def add_note(self, title, content):
         if title in self.data:
-            return f"Note with the title '{title}' already exists."
+            return f"[yellow]Note with the title[/yellow] '{title}' [yellow]already exists.[/yellow]"
         self.data[title] = Note(title, content)
-        return "Note was added!"
+        return "[sky_blue3]Note was added![/sky_blue3]"
 
     def delete_note(self, title):
         if title in self.data:
             del self.data[title]
-            return f"Note '{title}' has been deleted.'"
-        return f"Note '{title} was not found.'"
+            return f"[cornflower_blue]Note[/cornflower_blue] '{title}' [cornflower_blue]has been deleted.[/cornflower_blue]"
+        return f"[indian_red]Note[/indian_red] '{title}' [indian_red]was not found.[/indian_red]"
 
     def edit_note_title(self, current_title, new_title):
         """Edit the title of a note while keeping its content."""
@@ -185,7 +195,7 @@ def input_error(func):
         try:
             func(*args, **kwargs)
         except (KeyError, ValueError, IndexError) as er:
-            return f"Error: {er}"
+            return f"[red]Error: {er}[/red]"
 
     return wrapper
 
@@ -197,9 +207,9 @@ def add_contact(args, book: AddressBook):
     if record is None:
         record = Record(name)
         book.add_record(record)
-        message = "New contact added."
+        message = f"[green]New contact added.[/green]"
     else:
-        message = "Contact updated."
+        message = f"[yellow]Contact updated.[/yellow]"
     record.add_phone(phone)
 
     print(message)
@@ -211,9 +221,9 @@ def change_phone(args, book: AddressBook):
     record: Record = book.find(name)
     if record:
         record.edit_phone(old_phone, new_phone)
-        print("Phone has been changed.")
+        console.print(":ok_hand: [yellow]Phone has been changed.[/yellow]")
     else:
-        print("Contact not found.")
+        console.print("[indian_red]Contact not found.[/indian_red]")
 
 
 @input_error
@@ -223,16 +233,42 @@ def show_phone_numbers(args, book: AddressBook):
     if record:
         phones = record.phones
         print("; ".join(p.value for p in phones))
-    return "Contact not found."
+    return f"[indian_red]Contact not found.[/indian_red]"
 
 
 @input_error
 def show_all_contacts(book: AddressBook):
     is_empty = len(book.data) < 1
     if is_empty:
-        print("Address book is empty.")
-    else:
-        print("\n".join(str(record) for record in book.data.values()))
+        console.print("[bold yellow]Address book is empty.[/bold yellow]")
+        return
+
+    table = Table(title=":open_book: Address Book")
+    table.add_column("Name", justify="center", style="cyan", no_wrap=True)
+    table.add_column("Birthday", justify="center", style="medium_purple3")
+    table.add_column("Phones", justify="center", style="green")
+    table.add_column("Email", justify="center", style="green_yellow")
+    table.add_column("Address", justify="center", style="blue")
+
+    for record in book.data.values():
+        birthday_str = (
+            datetime.strftime(record.birthday.value, "%d.%m.%Y")
+            if record.birthday
+            else "No birthday"
+        )
+        phones_str = "; ".join(p.value for p in record.phones) or "No phones"
+        email_str = record.email.value if record.email else "No email"
+        address_str = record.address.value if record.address else "No address"
+
+        table.add_row(
+            f":bust_in_silhouette: {record.name.value}",
+            birthday_str,
+            phones_str,
+            email_str,
+            address_str,
+        )
+
+    console.print(table)
 
 
 @input_error
@@ -241,9 +277,11 @@ def add_birthday(args, book: AddressBook):
     record: Record = book.find(name)
     if record:
         record.add_birthday(birthday)
-        print(f"Birthday for {name} added")
+        console.print(
+            f"[medium_purple3]Birthday for {name} added[/medium_purple3]"
+        )
     else:
-        print("Contact not found.")
+        console.print(f":point_right: [indian_red]Contact not found.[/indian_red]")
 
 
 @input_error
@@ -253,9 +291,9 @@ def add_address(args, book: AddressBook):
     record: Record = book.find(name)
     if record:
         record.add_address(address)
-        print(f"Address for {name} added")
+        console.print(f"[blue]Address for {name} added.[/blue]")
     else:
-        print("Contact not found")
+        console.print(f"[indian_red]Contact not found.[/indian_red]")
 
 
 @input_error
@@ -263,13 +301,13 @@ def show_birthday(args, book):
     name = args[0]
     record = book.find(name)
     if record and record.birthday:
-        print(
+        console.print(
             f"{name}'s birthday: {datetime.strftime(record.birthday.value, '%d.%m.%Y')}"
         )
     elif record:
-        print(f"{name} does not have a birthday set.")
+        console.print(f"[yellow]{name} does not have a birthday set.[/yellow]")
     else:
-        print("Contact not found.")
+        console.print(f"[indian_red]Contact not found.[/indian_red]")
 
 
 @input_error
@@ -277,9 +315,9 @@ def upcoming_birthdays(args, book: AddressBook):
     days = int(args[0]) if args and args[0].isdigit() else 7  # Use 7 days by default
     upcoming = book.get_upcoming_birthdays(days)
     if upcoming:
-        print(f"Contacts with birthdays in {days} days: " + ", ".join(upcoming))
+        console.print(f"Contacts with birthdays in {days} days: " + ", ".join(upcoming))
     else:
-        print(f"No contacts with birthdays in {days} days.")
+        console.print(f"No contacts with birthdays in {days} days.")
 
 
 @input_error
@@ -287,19 +325,19 @@ def add_note(note_book: NoteBook):
     while True:
         title = input("Please enter note title: ").strip()
         if not title:
-            print("Note title cannot be empty.")
+            console.print("Note title cannot be empty.")
         elif title in note_book.data:
-            print(f"Note with the title '{title}' already exists.")
+            console.print(f"Note with the title '{title}' already exists.")
         else:
             break
 
     content = input("Please enter note content: ").strip()
     if not content:
-        print(f"Your note '{title}' has not content.")
+        console.print(f"Your note '{title}' has not content.")
 
     note_book.add_note(title, content)
 
-    print(f"Note successfully created! Title: '{title}', Content: '{content}'")
+    console.print(f"Note successfully created! Title: '{title}', Content: '{content}'")
 
 
 def edit_note(note_book: NoteBook):
@@ -308,7 +346,7 @@ def edit_note(note_book: NoteBook):
         current_title = input("Enter the title of the note you want to edit: ").strip()
         if current_title in note_book.data:
             break  # Exit the loop if the title is found
-        print(f"Note with title '{current_title}' not found. Please try again.")
+        console.print(f"[yellow]Note with title '{current_title}' not found. Please try again.[/yellow]")
 
     # Step 2: Choose what to edit
     while True:
@@ -320,19 +358,21 @@ def edit_note(note_book: NoteBook):
         if choice in ("t", "c", "b"):
             break  # Exit the loop if the input is valid
         elif choice == "e":
-            print("Exiting the edit process.")
+            console.print("[sky_blue1]Exiting the edit process.[/sky_blue1]")
             return  # Exit the function without making changes
         else:
-            print("Invalid choice. Please enter (T)itle, (C)ontent, (B)oth, or (E)xit.")
+            console.print(
+                "[indian_red]Invalid choice. Please enter (T)itle, (C)ontent, (B)oth, or (E)xit.[/indian_red]"
+            )
 
     # Edit the title if chosen
     if choice in ("t", "b"):
         while True:
-            new_title_input = input("Enter the new title: ").strip()
+            new_title_input = input("Enter the new title:").strip()
             if not new_title_input:
-                print("New title cannot be empty. Please try again.")
+                console.print("[indian_red]New title cannot be empty. Please try again.[/indian_red]")
             elif new_title_input in note_book.data and new_title_input != current_title:
-                print(
+                console.print(
                     f"A note with the title '{new_title_input}' already exists. Please try again."
                 )
             else:
@@ -343,19 +383,29 @@ def edit_note(note_book: NoteBook):
     if choice in ("c", "b"):
         new_content_input = input("Enter the new content for the note: ").strip()
         if not new_content_input:
-            print("Note content is empty.")  # Inform the user but still proceed to save
+            console.print(
+                "[indian_red]Note content is empty.[/indian_red]"
+            )  # Inform the user but still proceed to save
         note_book.edit_note_content(new_title_input, new_content_input)
 
-    print("Note updated successfully!")
+    console.print("[yellow]Note updated successfully![/yellow]")
 
 
 @input_error
 def show_all_notes(note_book: NoteBook):
     is_empty = len(note_book.data) < 1
     if is_empty:
-        print("Notes book is empty.")
-    else:
-        print("\n".join(str(note) for note in note_book.data.values()))
+        console.print("[indian_red]Notes book is empty.[/indian_red]")
+        return
+
+    table = Table(title=":notebook: Notes Book")
+    table.add_column("Title", justify="center", style="cyan", no_wrap=True)
+    table.add_column("Content", justify="center", style="green")
+
+    for note in note_book.data.values():
+        table.add_row(f"{note.title}", f"{note.content}")
+
+    console.print(table)
 
 
 @input_error
@@ -372,15 +422,15 @@ def add_email(args, book: AddressBook):
 
     if record:
         record.add_email(email)
-        print(f"Email for {name} added.")
+        console.print(f"[green_yellow]Email for {name} added.[/green_yellow]")
     else:
-        print("Contact not found.")
+        console.print("[indian_red]Contact not found.[/indian_red]")
 
 
 def main():
     book = AddressBook()
     note_book = NoteBook()
-    print("Welcome to the assistant bot!")
+    console.print(":robot: [bold blue]Welcome to the assistant bot![/bold blue] :wave:") 
 
     while True:
         user_input = input("Enter a command: ")
@@ -388,11 +438,11 @@ def main():
         args = args[0].split() if args else []
 
         if command in ["close", "exit"]:
-            print("Good bye!")
+            console.print(":wave: [green]Good bye![/green]")
             break
 
         elif command == "hello":
-            print("How can I help you?")
+            console.print(":smiley: [yellow]How can I help you?[/yellow]")
 
         elif command == "add":
             add_contact(args, book)
@@ -434,7 +484,9 @@ def main():
             add_email(args, book)
 
         else:
-            print("Invalid command.")
+            console.print(
+                ":exclamation: [bold red]Invalid command. Please try again![/bold red]"
+            )
 
 
 if __name__ == "__main__":
