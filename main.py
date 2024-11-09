@@ -195,7 +195,7 @@ def input_error(func):
         try:
             func(*args, **kwargs)
         except (KeyError, ValueError, IndexError) as er:
-            return f"[red]Error: {er}[/red]"
+            print(f"[red]Error: {er}[/red]")
 
     return wrapper
 
@@ -277,9 +277,7 @@ def add_birthday(args, book: AddressBook):
     record: Record = book.find(name)
     if record:
         record.add_birthday(birthday)
-        console.print(
-            f"[medium_purple3]Birthday for {name} added[/medium_purple3]"
-        )
+        console.print(f"[medium_purple3]Birthday for {name} added[/medium_purple3]")
     else:
         console.print(f":point_right: [indian_red]Contact not found.[/indian_red]")
 
@@ -346,7 +344,9 @@ def edit_note(note_book: NoteBook):
         current_title = input("Enter the title of the note you want to edit: ").strip()
         if current_title in note_book.data:
             break  # Exit the loop if the title is found
-        console.print(f"[yellow]Note with title '{current_title}' not found. Please try again.[/yellow]")
+        console.print(
+            f"[yellow]Note with title '{current_title}' not found. Please try again.[/yellow]"
+        )
 
     # Step 2: Choose what to edit
     while True:
@@ -370,7 +370,9 @@ def edit_note(note_book: NoteBook):
         while True:
             new_title_input = input("Enter the new title:").strip()
             if not new_title_input:
-                console.print("[indian_red]New title cannot be empty. Please try again.[/indian_red]")
+                console.print(
+                    "[indian_red]New title cannot be empty. Please try again.[/indian_red]"
+                )
             elif new_title_input in note_book.data and new_title_input != current_title:
                 console.print(
                     f"A note with the title '{new_title_input}' already exists. Please try again."
@@ -430,7 +432,7 @@ def add_email(args, book: AddressBook):
 def main():
     book = AddressBook()
     note_book = NoteBook()
-    console.print(":robot: [bold blue]Welcome to the assistant bot![/bold blue] :wave:") 
+    console.print(":robot: [bold blue]Welcome to the assistant bot![/bold blue] :wave:")
 
     while True:
         user_input = input("Enter a command: ")
