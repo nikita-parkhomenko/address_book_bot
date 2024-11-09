@@ -468,7 +468,7 @@ def main():
             show_birthday(args, book)
 
         elif command == "birthdays":
-            upcoming_birthdays(book)
+            upcoming_birthdays(args, book)
 
         elif command == "add-note":
             add_note(note_book)
