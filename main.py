@@ -3,8 +3,7 @@ from collections import UserDict
 from datetime import datetime, timedelta
 from rich.console import Console
 from rich.table import Table
-from rich.text import Text
-from rich import print as print
+from rich import print
 
 
 console = Console()
@@ -369,7 +368,7 @@ def edit_note(note_book: NoteBook):
     # Edit the title if chosen
     if choice in ("t", "b"):
         while True:
-            new_title_input = input("[sky_blue1]Enter the new title: [/sky_blue1]").strip()
+            new_title_input = input("Enter the new title:").strip()
             if not new_title_input:
                 console.print("[indian_red]New title cannot be empty. Please try again.[/indian_red]")
             elif new_title_input in note_book.data and new_title_input != current_title:
