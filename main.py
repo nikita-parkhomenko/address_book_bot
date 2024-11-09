@@ -152,11 +152,18 @@ class AddressBook(UserDict):
 
 
 class Note:
-    def __init__(self, title, content):
+    def __init__(self, title, content, tags=None):
         self.title = title
         self.content = content
+        self.tags = tags if tags else []
+
+    def add_tag(self, tag):
+        # Adds a tag to a note
+        if tag not in self.tags:
+            self.tags.append(tag)
 
     def __str__(self):
+        tags_str = ", ".join(self.tags) if self.tags else "No tags"
         return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}"
 
 
@@ -172,6 +179,13 @@ class NoteBook(UserDict):
             del self.data[title]
             return f"[cornflower_blue]Note[/cornflower_blue] '{title}' [cornflower_blue]has been deleted.[/cornflower_blue]"
         return f"[indian_red]Note[/indian_red] '{title}' [indian_red]was not found.[/indian_red]"
+
+    def add_tag_to_note(self, title, tag):
+        # Adds a tag to an existing note
+        if title in self.data:
+            self.data[title].add_tag(tag)
+            return f"Tag '{tag}' added to note '{title}.'"
+        return f"Note '{title}' not found."
 
     def edit_note_title(self, current_title, new_title):
         """Edit the title of a note while keeping its content."""
@@ -416,6 +430,15 @@ def delete_note(args, note_book: NoteBook):
     message = note_book.delete_note(title)
     print(message)
 
+@input_error
+def add_tag(args, note_book: NoteBook):
+    if len(args) < 2:
+        print("Please provide both the note title and the tag.")
+        return
+    
+    title, tag = args[0], args[1]
+    message = note_book.add_tag_to_note(title, tag)
+    print(message)
 
 @input_error
 def add_email(args, book: AddressBook):
@@ -481,6 +504,9 @@ def main():
 
         elif command == "delete-note":
             delete_note(args, note_book)
+
+        elif command == "add-tag":
+            add_tag(args, note_book)
 
         elif command == "add-email":
             add_email(args, book)
