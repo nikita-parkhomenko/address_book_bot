@@ -162,7 +162,7 @@ class Note:
     def __str__(self):
         tags_str = ", ".join(self.tags) if self.tags else "No tags"
         return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}, [cornflower_blue]Tags:[/cornflower_blue] {tags_str}"
-    
+
 
 class NoteBook(UserDict):
     def add_note(self, title, content):
@@ -416,9 +416,11 @@ def show_all_notes(note_book: NoteBook):
     table = Table(title=":notebook: [bold turquoise4]Notes Book[/bold turquoise4]")
     table.add_column("Title", justify="center", style="cyan", no_wrap=True)
     table.add_column("Content", justify="center", style="green")
+    table.add_column("Tags", justify="center", style="yellow")
 
     for note in note_book.data.values():
-        table.add_row(f"{note.title}", f"{note.content}")
+        tags = "; ".join(note.tags)
+        table.add_row(f"{note.title}", f"{note.content}", f"{tags}")
 
     console.print(table)
 
@@ -474,7 +476,7 @@ def search_note(args, note_book: NoteBook):
 @input_error
 def add_tag(note_book: NoteBook):
     note_title = input("Note title: ").strip()
-    
+
     if note_title not in note_book.data:
         print(f"Note with title '{note_title}' not found.")
         return
