@@ -368,19 +368,21 @@ def edit_note(note_book: NoteBook):
             )
 
     # Edit the title if chosen
+    new_title = current_title  # Default to current title unless changed
     if choice in ("t", "b"):
         while True:
-            new_title_input = input("Enter the new title:").strip()
+            new_title_input = input("Enter the new title: ").strip()
             if not new_title_input:
                 console.print(
                     "[indian_red]New title cannot be empty. Please try again.[/indian_red]"
                 )
             elif new_title_input in note_book.data and new_title_input != current_title:
                 console.print(
-                    f"A note with the title '{new_title_input}' already exists. Please try again."
+                    f"[indian_red]A note with the title '{new_title_input}' already exists. Please try again.[/indian_red]"
                 )
             else:
                 note_book.edit_note_title(current_title, new_title_input)
+                new_title = new_title_input  # Update new title for content editing
                 break
 
     # Edit the content if chosen
@@ -390,7 +392,7 @@ def edit_note(note_book: NoteBook):
             console.print(
                 "[indian_red]Note content is empty.[/indian_red]"
             )  # Inform the user but still proceed to save
-        note_book.edit_note_content(new_title_input, new_content_input)
+        note_book.edit_note_content(new_title, new_content_input)
 
     console.print("[yellow]Note updated successfully![/yellow]")
 
