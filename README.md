@@ -29,16 +29,18 @@ Address Book Bot is a command-line-based contact management system that allows u
 
 - **add-note**: Adds a new note by entering a title and content.
 - **edit-note**: Prompts you to edit a note's title or content.
+- **search-note <query>**: Find specific note by title or content.
 - **all-notes**: Displays all notes in the notes book.
+- **note-add-tag**: Add tag to specific note.
 - **delete-note <title>**: Deletes a note by its title.
 
 ### Contact Management
 
 - **hello**: Greets the user and provides an introductory message.
-- **add <name> <phone>**: Adds a new contact with the specified name and phone number. If the contact exists, it updates the phone number.
-- **change <name> <old_phone> <new_phone>**: Updates a contact’s phone number.
-- **phone <name>**: Displays all phone numbers associated with the contact.
-- **all**: Shows all contacts in the address book.
+- **add-contact <name> <phone>**: Adds a new contact with the specified name and phone number. If the contact exists, it updates the phone number.
+- **change-phone <name> <old_phone> <new_phone>**: Updates a contact’s phone number.
+- **show-phone <name>**: Displays all phone numbers associated with the contact.
+- **all-contacts**: Shows all contacts in the address book.
 - **add-birthday <name> <birthday>**: Adds or updates the birthday for the specified contact. The birthday format should be `DD.MM.YYYY`.
 - **add-address <name> <address>**: Adds or updates the address for the specified contact.
 - **show-birthday <name>**: Displays the birthday of the specified contact.
