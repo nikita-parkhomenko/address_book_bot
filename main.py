@@ -437,7 +437,7 @@ def search_note(args, note_book: NoteBook):
 
     if not query:
         console.print(
-            "[indian_red]Please enter a new search query for notes.[/indian_red]"
+            "[indian_red]Search query should not be empty.[/indian_red]"
         )
         return
 
