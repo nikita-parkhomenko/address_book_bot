@@ -415,7 +415,6 @@ def show_all_notes(note_book: NoteBook):
 @input_error
 def delete_note(args, note_book: NoteBook):
     title = " ".join(args[:])
-    print(f"title: {title}")
     message = note_book.delete_note(title)
     print(message)
 
