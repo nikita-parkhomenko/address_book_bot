@@ -153,10 +153,16 @@ class Note:
     def __init__(self, title, content):
         self.title = title
         self.content = content
+        self.tags = []
+
+    def add_tag(self, tag):
+        if tag not in self.tags:
+            self.tags.append(tag)
 
     def __str__(self):
-        return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}"
-
+        tags_str = ", ".join(self.tags) if self.tags else "No tags"
+        return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}, [cornflower_blue]Tags:[/cornflower_blue] {tags_str}"
+    
 
 class NoteBook(UserDict):
     def add_note(self, title, content):
@@ -465,6 +471,24 @@ def search_note(args, note_book: NoteBook):
         console.print("[indian_red]No matching notes found.[/indian_red]")
 
 
+@input_error
+def add_tag(note_book: NoteBook):
+    note_title = input("Note title: ").strip()
+    
+    if note_title not in note_book.data:
+        print(f"Note with title '{note_title}' not found.")
+        return
+
+    tag = input("Note tag to add: ").strip()
+    if not tag:
+        print("Tag cannot be empty.")
+        return
+
+    note = note_book.data[note_title]
+    note.add_tag(tag)
+    print(f"Tag '{tag}' successfully added to note '{note_title}'!")
+
+
 def show_menu():
     """Displays the menu with available commands"""
     commands = """
@@ -485,6 +509,7 @@ def show_menu():
     [sky_blue1]all-notes[/sky_blue1]                                    - Show all notes
     [sky_blue1]delete-note <title>[/sky_blue1]                          - Delete note
     [sky_blue1]search-note <query>[/sky_blue1]                          - Search note
+    [sky_blue1]note-add-tag[/sky_blue1]                                 - Add tag
 
     [bold]Exit:[/bold]
     [dark_orange]close / exit[/dark_orange]                                 - Exit the application
@@ -587,6 +612,9 @@ def main():
 
         elif command == "search-note":
             search_note(args, note_book)
+
+        elif command == "note-add-tag":
+            add_tag(note_book)
 
         else:
             console.print("[red]Invalid command. Please try again![/red]")
