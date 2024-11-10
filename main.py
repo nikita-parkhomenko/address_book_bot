@@ -1,4 +1,5 @@
 import re
+import pickle
 from collections import UserDict
 from datetime import datetime, timedelta
 from rich.console import Console
@@ -430,6 +431,7 @@ def add_email(args, book: AddressBook):
         console.print("[indian_red]Contact not found.[/indian_red]")
 
 
+<<<<<<< HEAD
 def show_menu():
     """Displays the menu with available commands"""
     commands = """
@@ -462,11 +464,37 @@ def show_menu():
             expand=False,
         )
     )
+=======
+def save_address_book(address_book: AddressBook, file_name: str = "address_book.pkl"):
+    with open(file_name, "wb") as f:
+        pickle.dump(address_book, f)
+
+
+def load_address_book(file_name: str = "address_book.pkl"):
+    try:
+        with open(file_name, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return AddressBook()
+
+
+def save_note_book(note_book: NoteBook, file_name: str = "note_book.pkl"):
+    with open(file_name, "wb") as f:
+        pickle.dump(note_book, f)
+
+
+def load_note_book(file_name: str = "note_book.pkl"):
+    try:
+        with open(file_name, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return NoteBook()
+>>>>>>> 1ebf57a (feature/Save-and-load-books-data)
 
 
 def main():
-    book = AddressBook()
-    note_book = NoteBook()
+    note_book = load_note_book()
+    address_book = load_address_book()
     console.print(":robot: [bold blue]Welcome to the assistant bot![/bold blue] :wave:")
     show_menu()
 
@@ -476,6 +504,8 @@ def main():
         args = args[0].split() if args else []
 
         if command in ["close", "exit"]:
+            save_note_book(note_book)
+            save_address_book(address_book)
             console.print(":wave: [green]Good bye![/green]")
             break
 
@@ -483,28 +513,31 @@ def main():
             console.print(":smiley: [yellow]How can I help you?[/yellow]")
 
         elif command == "add":
-            add_contact(args, book)
+            add_contact(args, address_book)
 
         elif command == "change":
-            change_phone(args, book)
+            change_phone(args, address_book)
 
         elif command == "phone":
-            show_phone_numbers(args, book)
+            show_phone_numbers(args, address_book)
 
         elif command == "all":
-            show_all_contacts(book)
+            show_all_contacts(address_book)
 
         elif command == "add-birthday":
-            add_birthday(args, book)
+            add_birthday(args, address_book)
 
         elif command == "add-address":
-            add_address(args, book)
+            add_address(args, address_book)
+
+        elif command == "add-email":
+            add_email(args, address_book)
 
         elif command == "show-birthday":
-            show_birthday(args, book)
+            show_birthday(args, address_book)
 
         elif command == "birthdays":
-            upcoming_birthdays(args, book)
+            upcoming_birthdays(args, address_book)
 
         elif command == "add-note":
             add_note(note_book)
@@ -517,9 +550,6 @@ def main():
 
         elif command == "delete-note":
             delete_note(args, note_book)
-
-        elif command == "add-email":
-            add_email(args, book)
 
         else:
             console.print(
