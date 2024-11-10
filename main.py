@@ -371,7 +371,7 @@ def edit_note(note_book: NoteBook):
     new_title = current_title  # Default to current title unless changed
     if choice in ("t", "b"):
         while True:
-            new_title_input = input("Enter the new title:").strip()
+            new_title_input = input("Enter the new title: ").strip()
             if not new_title_input:
                 console.print(
                     "[indian_red]New title cannot be empty. Please try again.[/indian_red]"
