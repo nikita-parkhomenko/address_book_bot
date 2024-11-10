@@ -152,10 +152,10 @@ class AddressBook(UserDict):
 
 
 class Note:
-    def __init__(self, title, content, tags=None):
+    def __init__(self, title, content):
         self.title = title
         self.content = content
-        self.tags = tags if tags else []
+        self.tags = []
 
     def add_tag(self, tag):
         # Adds a tag to a note
@@ -164,7 +164,7 @@ class Note:
 
     def __str__(self):
         tags_str = ", ".join(self.tags) if self.tags else "No tags"
-        return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}"
+        return f"[cornflower_blue]Title:[/cornflower_blue] {self.title}, [cornflower_blue]Content:[/cornflower_blue] {self.content}, [cornflower_blue]Tags:[/cornflower_blue] {tags_str}"
 
 
 class NoteBook(UserDict):
@@ -431,14 +431,21 @@ def delete_note(args, note_book: NoteBook):
     print(message)
 
 @input_error
-def add_tag(args, note_book: NoteBook):
-    if len(args) < 2:
-        print("Please provide both the note title and the tag.")
+def add_tag(note_book: NoteBook):
+    note_title = input("Note title: ").strip()
+
+    if note_title not in note_book.data:
+        print(f"Note with title '{note_title}' not found.")
         return
     
-    title, tag = args[0], args[1]
-    message = note_book.add_tag_to_note(title, tag)
-    print(message)
+    tag = input("Note tag to add: ").strip
+    if not tag:
+        print("Tag cannot be empty.")
+        return
+    
+    note = note_book.data[note_title]
+    note.add_tag(tag)
+    print(f"Tag successfully added to note '{note_title}'!")
 
 @input_error
 def add_email(args, book: AddressBook):
@@ -506,7 +513,7 @@ def main():
             delete_note(args, note_book)
 
         elif command == "add-tag":
-            add_tag(args, note_book)
+            add_tag(note_book)
 
         elif command == "add-email":
             add_email(args, book)
