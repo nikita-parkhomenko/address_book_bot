@@ -433,6 +433,35 @@ def add_email(args, book: AddressBook):
         console.print("[indian_red]Contact not found.[/indian_red]")
 
 
+@input_error
+def search_note(args, note_book: NoteBook):
+    query = " ".join(args).strip().lower()
+
+    if not query:
+        console.print(
+            "[indian_red]Search query should not be empty.[/indian_red]"
+        )
+        return
+
+    results = [
+        note
+        for note in note_book.data.values()
+        if query in note.title.lower() or query in note.content.lower()
+    ]
+
+    if results:
+        table = Table(title="Search Results")
+        table.add_column("Title", justify="center", style="cyan", no_wrap=True)
+        table.add_column("Content", justify="center", style="green")
+
+        for note in results:
+            table.add_row(note.title, note.content)
+
+        console.print(table)
+    else:
+        console.print("[indian_red]No matching notes found.[/indian_red]")
+
+
 def show_menu():
     """Displays the menu with available commands"""
     commands = """
@@ -452,6 +481,7 @@ def show_menu():
     [sky_blue1]edit-note[/sky_blue1]                                    - Edit a note
     [sky_blue1]all-notes[/sky_blue1]                                    - Show all notes
     [sky_blue1]delete-note <title>[/sky_blue1]                          - Delete note
+    [sky_blue1]search-note <query>[/sky_blue1]                          - Search note
 
     [bold]Exit:[/bold]
     [dark_orange]close / exit[/dark_orange]                                 - Exit the application
@@ -551,6 +581,9 @@ def main():
 
         elif command == "delete-note":
             delete_note(args, note_book)
+
+        elif command == "search-note":
+            search_note(args, note_book)
 
         else:
             console.print(
