@@ -39,17 +39,13 @@ class Birthday(Field):
         try:
             self.value = datetime.strptime(value, "%d.%m.%Y")
         except ValueError:
-            raise ValueError(
-                "[red]Invalid date format. Use DD.MM.YYYY instead.[/red]"
-            )
+            raise ValueError("[red]Invalid date format. Use DD.MM.YYYY instead.[/red]")
 
 
 class Address(Field):
     def __init__(self, value):
         if not self.validate(value):
-            raise ValueError(
-                "[red]Address must be at least 2 characters long.[/red]"
-            )
+            raise ValueError("[red]Address must be at least 2 characters long.[/red]")
         super().__init__(value)
 
     def validate(self, value):
@@ -342,7 +338,9 @@ def add_note(note_book: NoteBook):
 
     note_book.add_note(title, content)
 
-    console.print(f"[blue]Note successfully created! Title:[/blue] '{title}'[blue], Content: [/blue]'{content}'")
+    console.print(
+        f"[blue]Note successfully created! Title:[/blue] '{title}'[blue], Content: [/blue]'{content}'"
+    )
 
 
 def edit_note(note_book: NoteBook):
@@ -443,9 +441,7 @@ def search_note(args, note_book: NoteBook):
     query = " ".join(args).strip().lower()
 
     if not query:
-        console.print(
-            "[indian_red]Search query should not be empty.[/indian_red]"
-        )
+        console.print("[indian_red]Search query should not be empty.[/indian_red]")
         return
 
     results = [
@@ -593,9 +589,7 @@ def main():
             search_note(args, note_book)
 
         else:
-            console.print(
-                "[red]Invalid command. Please try again![/red]"
-            )
+            console.print("[red]Invalid command. Please try again![/red]")
 
 
 if __name__ == "__main__":
