@@ -464,9 +464,11 @@ def search_note(args, note_book: NoteBook):
         )
         table.add_column("Title", justify="center", style="cyan", no_wrap=True)
         table.add_column("Content", justify="center", style="green")
+        table.add_column("Tags", justify="center", style="yellow")
 
         for note in results:
-            table.add_row(note.title, note.content)
+            tags = "; ".join(note.tags)
+            table.add_row(note.title, note.content, tags)
 
         console.print(table)
     else:
@@ -506,7 +508,7 @@ def show_menu():
     [cyan3]all-contacts[/cyan3]                                 - Show all contacts
 
     [bold]Notes:[/bold]
-    [sky_blue1]add-note <title> <text>[/sky_blue1]                      - Add a new note
+    [sky_blue1]add-note[/sky_blue1]                                     - Add a new note
     [sky_blue1]edit-note[/sky_blue1]                                    - Edit a note
     [sky_blue1]all-notes[/sky_blue1]                                    - Show all notes
     [sky_blue1]delete-note <title>[/sky_blue1]                          - Delete note
