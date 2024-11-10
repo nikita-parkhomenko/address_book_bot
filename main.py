@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from rich.console import Console
 from rich.table import Table
 from rich import print
+from rich.panel import Panel
 
 
 console = Console()
@@ -429,10 +430,45 @@ def add_email(args, book: AddressBook):
         console.print("[indian_red]Contact not found.[/indian_red]")
 
 
+def show_menu():
+    """Виводить меню з доступними командами"""
+    commands = """
+    [bold]Контакти:[/bold]
+    [cyan3]add <name> <phone>[/cyan3]                           - Додати новий контакт з телефоном
+    [cyan3]add-birthday <name> <birthday>[/cyan3]               - Додати день народження для контакту
+    [cyan3]add-address <name> <address>[/cyan3]                 - Додати адресу для контакту
+    [cyan3]add-email <name> <email>[/cyan3]                     - Додати або оновити email контакту
+    [cyan3]change <name> <old_phone> <new_phone>[/cyan3]        - Змінити телефон контакту
+    [cyan3]phone <name>[/cyan3]                                 - Показати номери телефонів контакту
+    [cyan3]show-birthday <name>[/cyan3]                         - Показати день народження контакту
+    [cyan3]birthdays <days>[/cyan3]                             - Показати контакти з найближчими днями народження
+    [cyan3]all[/cyan3]                                          - Показати всі контакти
+
+    [bold]Нотатки:[/bold]
+    [sky_blue1]add-note <title> <text>[/sky_blue1]                      - Додати нову нотатку
+    [sky_blue1]edit-note[/sky_blue1]                                    - Редагувати нотатку
+    [sky_blue1]all-notes[/sky_blue1]                                    - Показати всі нотатки
+    [sky_blue1]delete-note <title>[/sky_blue1]                          - Видалити нотатку
+
+    [bold]Вихід:[/bold]
+    [dark_orange]close / exit[/dark_orange]                                 - Вийти з програми
+    """
+
+    # Виводимо меню з рамкою
+    console.print(
+        Panel(
+            commands,
+            title="[bold light_sky_blue3]:sparkles: Список команд бота :sparkles:[/bold light_sky_blue3]",
+            expand=False,
+        )
+    )
+
+
 def main():
     book = AddressBook()
     note_book = NoteBook()
     console.print(":robot: [bold blue]Welcome to the assistant bot![/bold blue] :wave:")
+    show_menu()
 
     while True:
         user_input = input("Enter a command: ")
