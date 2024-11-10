@@ -10,13 +10,16 @@ Address Book Bot is a command-line-based contact management system that allows u
 - **Error Handling**: Provides clear feedback for incorrect input with custom error handling.
 - **User-Friendly Commands**: Simple, intuitive commands for quick access to all functionalities.
 
-## How to install
+## How to use
 
 1. **Clone the repository**:
 
    ```bash
    git clone https://github.com/nikita-parkhomenko/address_book_bot.git
    cd address-book-bot
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
    python main.py
    ```
 
