@@ -614,6 +614,7 @@ def main():
 
         elif command == "search-note":
             search_note(args, note_book)
+            
         elif command == "note-add-tag":
             add_tag(args, note_book)
 
