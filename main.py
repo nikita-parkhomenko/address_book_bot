@@ -431,7 +431,6 @@ def add_email(args, book: AddressBook):
         console.print("[indian_red]Contact not found.[/indian_red]")
 
 
-<<<<<<< HEAD
 def show_menu():
     """Displays the menu with available commands"""
     commands = """
@@ -456,7 +455,7 @@ def show_menu():
     [dark_orange]close / exit[/dark_orange]                                 - Exit the application
     """
 
-    # Виводимо меню з рамкою
+    # Print table with commands
     console.print(
         Panel(
             commands,
@@ -464,7 +463,8 @@ def show_menu():
             expand=False,
         )
     )
-=======
+
+
 def save_address_book(address_book: AddressBook, file_name: str = "address_book.pkl"):
     with open(file_name, "wb") as f:
         pickle.dump(address_book, f)
@@ -489,7 +489,6 @@ def load_note_book(file_name: str = "note_book.pkl"):
             return pickle.load(f)
     except FileNotFoundError:
         return NoteBook()
->>>>>>> 1ebf57a (feature/Save-and-load-books-data)
 
 
 def main():
