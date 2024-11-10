@@ -414,7 +414,7 @@ def show_all_notes(note_book: NoteBook):
 
 @input_error
 def delete_note(args, note_book: NoteBook):
-    title = args[0]
+    title = " ".join(args[:])
     message = note_book.delete_note(title)
     print(message)
 
@@ -435,15 +435,15 @@ def show_menu():
     """Displays the menu with available commands"""
     commands = """
     [bold]Contacts:[/bold]
-    [cyan3]add <name> <phone>[/cyan3]                           - Add new contact with a phone number
+    [cyan3]add-contact <name> <phone>[/cyan3]                   - Add new contact with a phone number
     [cyan3]add-birthday <name> <birthday>[/cyan3]               - Add birthday for a contact
     [cyan3]add-address <name> <address>[/cyan3]                 - Add contact's address
     [cyan3]add-email <name> <email>[/cyan3]                     - Add or update contact's email
-    [cyan3]change <name> <old_phone> <new_phone>[/cyan3]        - Change contact's phone number
-    [cyan3]phone <name>[/cyan3]                                 - Show contact's phone numbers
+    [cyan3]change-phone <name> <old_phone> <new_phone>[/cyan3]  - Change contact's phone number
+    [cyan3]show-phone <name>[/cyan3]                            - Show contact's phone numbers
     [cyan3]show-birthday <name>[/cyan3]                         - Show contact's birthday
     [cyan3]birthdays <days>[/cyan3]                             - Show prospects with upcoming birthdays
-    [cyan3]all[/cyan3]                                          - Show all contacts
+    [cyan3]all-contacts[/cyan3]                                 - Show all contacts
 
     [bold]Notes:[/bold]
     [sky_blue1]add-note <title> <text>[/sky_blue1]                      - Add a new note
@@ -511,16 +511,16 @@ def main():
         elif command == "hello":
             console.print(":smiley: [yellow]How can I help you?[/yellow]")
 
-        elif command == "add":
+        elif command == "add-contact":
             add_contact(args, address_book)
 
-        elif command == "change":
+        elif command == "change-phone":
             change_phone(args, address_book)
 
-        elif command == "phone":
+        elif command == "show-phone":
             show_phone_numbers(args, address_book)
 
-        elif command == "all":
+        elif command == "all-contacts":
             show_all_contacts(address_book)
 
         elif command == "add-birthday":
