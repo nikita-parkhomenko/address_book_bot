@@ -419,7 +419,7 @@ def show_all_notes(note_book: NoteBook):
     table.add_column("Tags", justify="center", style="yellow")
 
     for note in note_book.data.values():
-        tags = "; ".join(t for t in note.tags)
+        tags = "; ".join(note.tags)
         table.add_row(f"{note.title}", f"{note.content}", f"{tags}")
 
     console.print(table)
